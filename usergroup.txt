@@ -1,0 +1,48 @@
+Felhasználók és csoportok kezelése
+
+Felhasználó felvétele két féle módszerrel:
+1.
+$ adduser felhasználo_neve 
+
+2.
+$ useradd -c "Teszt Katalin" -d /home/kati -k /etc/skel -m -s /bin/bash kati
+A useradd kapcsolói
+-c	megjegyzés
+-d	home könyvtár
+-g	elsődleges csoport
+-G	másodlagos csoport vagy csoportok
+-m	hozzuk létre a home könyvtárát
+-s	milyen shellt kapjon
+-u UID	mi legyen a uid-je
+-k	honnan másoljuk alapértelmezett fájlokat
+
+Jelszó beállítása a felhasználóhoz:
+$ passwd [felhasználónév]
+
+Jelszó élettartam:
+$ chage -l [felhasználónév]
+10 nap múlva jár le:
+$ chage -M 10 [felhasználónév]
+
+Csoportok létrehozása:
+$ groupadd [csoportnév]
+Felhasználó csoporthoz adása:
+$ gpasswd -a [felhasználóneve] [csoportneve]
+
+Csoport tagság lekérdezése:
+$ groups [felhasználónév]
+
+Felhasználó módosítása:
+usermod parancs
+Pl: felhasználó (jozsi) elsődleges csoportjának megváltoztatása
+$ usermod -g IT jozsi
+
+Felhasználó törlése:
+$ userdel [felhasználó]
+A home könyvtárát is töröljük:
+$ userdel -r [felhasználó]
+
+Csoport törlése:
+$ groupdel [csoportneve]
+
+
