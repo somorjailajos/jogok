@@ -1,0 +1,28 @@
+SSH Szerver beállítása Linuxon
+
+Telepített csomagok frissítése:
+$ sudo apt update
+
+SSH csomag letöltése:
+$ sudo apt install ssh
+
+SSH konfigurálása a “/etc/ssh/sshd_config” fájlban:
+Ha szeretnénk a root felhasználóval bejelentkezni, akkor azt engedélyezni kell a 	konfigurációs fájlban:
+PermitRootLogin yes
+
+SSH beállítása, hogy az op.renszer újraindítása után is elinduljon
+$ sudo systemctl enable ssh
+
+SSH szolgáltatás elindítása:
+$ sudo systemctl start ssh
+
+SSH státusz ellenőrzése
+$ sudo systemctl status ssh
+
+Tűzfal beállítások:
+$ sudo ufw allow ssh
+$ sudo ufw enable
+
+
+
+
