@@ -1,0 +1,77 @@
+Jelenlegi hely megjelenítése:
+$ pwd
+/home/localuser
+
+Aktuális mappa tartalma:
+$ ls
+$ mkdir –help
+
+Könyvtár létrehozása:
+$ mkdir mydir 
+$ file mydir 
+mydir: directory
+
+Részletes lista megjelenítése: 
+$ ls -l 
+drwxrwxr-x. 2 localuser localuser 6 Jun 9 14:47 mydir 
+$ cd mydir/ 
+$ pwd 
+/home/localuser/mydir 
+$ ls -l 
+
+Több könyvtár létrehozása
+$ mkdir dir1 dir2 dir3
+
+Alkönyvtárak létrehozása
+$ mkdir -p dir4/subdir1
+
+Change Directory
+$ cd /dir/dir2
+$ cd ..
+$ cd /
+
+File létrehozása
+$ touch file2 file3
+$ touch dir4/subdir1/file4
+
+Törlés 
+Recursive
+$ rm -r dir3/dir2/
+
+Könyvtár törlése:
+$ rm -d dir3/
+$ rmdir dir3
+
+Speciális parancsok
+$ mkdir dir{1..9}
+
+tail parancs
+Utolsó 10 sor megjelenítése (alapértelmezetten) egy fájlból.
+$ tail text_file
+Utolsó 3 sor megjelenítése
+$ tail --line=3 text_file
+$ tail -n 3 text_file
+
+Folyamatos kiíratás, pl: Log fájlok követése
+$ tail --follow logfile_name
+$tail -f logfile_name
+head parancs
+$ head text_file
+cat parancs
+
+Egy fájl tartalmának megjelenítése
+$ cat text_file.txt
+
+Sorszámozva jelennek meg a szövegfájl sorai
+$ cat -n text_file.txt
+
+Új szöveges fájl létrehozása és szöveget megadni (befejezés Ctrl+D)
+$ cat > new_file_name
+
+Két fájl tartalmának összefűzése
+$ cat file1.txt file2.txt > merged_file.txt 
+
+Egy fájl tartalmának hozzáfűzése egy másik fájl végéhez
+$ cat file_name1 >> file_name2
+stat parancs
+$ stat file_name

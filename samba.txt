@@ -1,0 +1,91 @@
+Samba fájl szerver telepítése Ubuntura
+
+1.	Csomaginfók frissítése
+sudo apt update
+
+2.	Samba szerver telepítése
+sudo apt install samba
+ellenőrzés:
+whereis samba
+
+3.	Megosztani kívánt mappa létrehozása
+pl.:
+mkdir -p /home/<username>/sambashare/
+
+A megfelelő jogokat konfiguráljuk:
+chmod 755 /home/<username>/sambashare/
+
+nem kötelező:
+sudo chown nobody:nogroup /home/<username>/sambashare/
+
+
+4.	Konfigurálás
+sudo nano /etc/samba/smb.conf
+A fájl végére helyezzük el:
+[sambashare]
+    comment = Ubuntu File Server Share
+    path = /home/<username>/sambashare/
+    browsable = yes
+    guest ok = no
+    read only = no
+    create mask = 0755
+
+5.	Szolgáltatások újraindítása
+sudo systemctl restart smbd.service nmbd.service
+Szolgáltatások ellenőrzése:
+sudo systemctl status smbd.service nmbd.service
+
+6.	Tűzfal módosítása
+sudo ufw allow samba
+
+7.	Az smb szolgáltatáshoz külön kell jelszót beállítani egy már létező Linux felhasználóhoz
+sudo smbpasswd -a username
+
+Tesztelés Windows 10-ben
+Smb felhasználó hozzáadása local, vagy lehet tartományi felhasználó is.
+ 
+ 
+ 
+ 
+Samba fájl szerver telepítése Ubuntura
+
+1.	Csomaginfók frissítése
+
+sudo apt update
+
+2.	Samba szerver telepítése
+sudo apt install samba
+ellenőrzés:
+whereis samba
+3.	Megosztani kívánt mappa létrehozása
+pl.:
+mkdir -p /home/<username>/sambashare/
+
+A megfelelő jogokat konfiguráljuk:
+chmod 755 /home/<username>/sambashare/
+
+nem kötelező:
+sudo chown nobody:nogroup /home/<username>/sambashare/
+
+
+4.	Konfigurálás
+sudo nano /etc/samba/smb.conf
+A fájl végére helyezzük el:
+[sambashare]
+    comment = Ubuntu File Server Share
+    path = /home/<username>/sambashare/
+    browsable = yes
+    guest ok = no
+    read only = no
+    create mask = 0755
+
+5.	Szolgáltatások újraindítása
+sudo systemctl restart smbd.service nmbd.service
+Szolgáltatások ellenőrzése:
+sudo systemctl status smbd.service nmbd.service
+
+6.	Tűzfal módosítása
+sudo ufw allow samba
+
+7.	Az smb szolgáltatáshoz külön kell jelszót beállítani egy már létező Linux felhasználóhoz
+sudo smbpasswd -a username

@@ -1,0 +1,140 @@
+Apache Webszerver telepítés, beállítás
+
+1.	Apache2 Webszerver telepítése
+ 
+Csomaglista frissítése:
+ 
+$ sudo apt update
+ 
+Apache2 telepítése:
+ 
+$ sudo apt install apache2
+ 
+Tűzfalszabályok lekérdezése, majd a tűzfalszabály beállítása:
+ 
+Alkalmazás profilok megjelenítése:
+ 
+$ sudo ufw app list
+ 
+ 
+ 
+Apache: megnyitja a 80-as TCP-portot a HTTP-hez (titkosítatlan kapcsolat)
+Apache Full: megnyitja a 80-as TCP-portot (HTTP, nem titkosított) és a 443-as portot (HTTPS, TLS/SSL titkosítással)
+Apache Secure: csak a 443-as HTTPS-portot nyitja meg titkosított kapcsolathoz
+ 
+ 
+Tűzfelprofil engedélyezése:
+ 
+$ sudo ufw allow 'Apache'
+ 
+UFW (tűzfal) státusz ellenőrzése:
+ 
+$ sudo ufw status
+ 
+Apache2 webszerver tesztelése:
+ 
+Apache2 szolgáltatás státusza:
+ 
+$ sudo systemctl status apache2
+ 
+IP cím ellenőrzése:
+ 
+$ hostname -ii
+ 
+Weboldal megnyitása (pl: host gépen):
+(Ehhez szükség van fix IP címmel rendelkező hálózati kártyára)
+ 
+http://192.168.56.10
+ 
+-------------------------------------
+
+Az alapértelmezett webhely elérési útja:
+
+/var/www/html  
+
+Itt található a nyitó html fájl: index.html
+ 
+2.	Apache2 démon (szolgáltatás) kezelése
+ 
+ 
+Az Apache webszerver indítása:
+ 
+$ sudo systemctl start apache2
+ 
+Az Apache webszerver leállítása:
+ 
+$ sudo systemctl stop apache2
+ 
+Az Apache webszerver leállítása és újraindítása:
+ 
+$ sudo systemctl restart apache2
+ 
+Az Apache újraindítása és a konfiguráció újratöltése:
+ 
+$ sudo systemctl reload apache2
+ 
+Apache szolgáltatás automatikus indulásának letíltása (rendszerindításkor):
+ 
+$ sudo systemctl disable apache2
+ 
+Az automatikus Apache indítás újraaktiválása indításkor:
+ 
+$ sudo systemctl enable apache2
+
+3.	Saját Virtual host létrehozása
+Ha több tartomány szeretnénk üzemeltetni, akkor virtual host-ot kell konfigurálni a webszerveren. Ennek lépései a következők:
+A tartományhoz tartozó webhely könyvtár létrehozása:
+$ sudo mkdir /var/www/[sajat_tartomany_neve]
+Állítsuk be a jogosultságot (írás, olvasás):
+$ sudo chmod -R 755 /var/www/[sajat_tartomany_neve]
+Hozzunk létre egy tesztoldalt:
+$ sudo nano /var/www/[sajat_tartomany_neve]/index.html
+Szerkesszük a tartalmát (példa tartalom):
+<html>
+<head>
+        <title>Üdvözlet!</title>
+ </head>
+  	 <body>
+       		<h1>Saját tartomány virtual host Weboldal</h1>
+    	</body>
+</html>
+
+Konfiguráció:
+
+Ha nem a 80-as portot szeretnénk használni, akkor azt engedélyezni kell a ports.conf fájlban:
+
+nano /etc/apache2/ports.conf
+
+Itt adjuk meg a használni kívánt portot:
+pl: Listen 8080
+
+A tűzfalon is át kell engedni a kívánt portot:
+ufw allow 8080
+
+Készítsünk saját konfigurációs fájlt a tartományhoz:
+$ /etc/apache2/sites-available/[sajat_tartomany_neve].conf
+
+(Itt lehet másolni a default konfigurációs fájlt: 000-default.conf)
+ 
+A következő konfigurációs blokkot hozzuk létre a .conf fájlba, cseréljük a [sajat_tartomany_neve] értékeket a megfelelő névre:
+
+<VirtualHost *:8080>
+    ServerAdmin webmaster@localhost
+    ServerName your_domain
+    ServerAlias www.[sajat_tartomany_neve]
+    DocumentRoot /var/www/[sajat_tartomany_neve]
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+Aktiválni kell a konfigurációt:
+$ sudo a2ensite [sajat_tartomany_neve].conf
+
+Inaktiválni kell az előző alapértelmezett oldal konfigurációját:
+$ sudo a2dissite 000-default.conf
+
+Konfiguráció tesztelése:
+$ sudo apache2ctl configtest
+
+Ha minden rendben van. akkor újra kell indítani az apache-ot:
+$ sudo systemctl restart apache2

@@ -1,0 +1,16 @@
+chmod 777 szoveg.txt   - midenki mindent tehet
+chmod 755 szoveg.txt   - tulajdonos mindent, csoport és mások csak írás,végrehajtás
+chmod 700 szoveg.txt   - tulaj mindent, többiek semmit
+chmod 711 - tulaj mindent, mások csak futtathatják de nem olvashatják
+
+
+0	-	-	-	nincs jogosultság
+1	-	-	x	végrehajtási jog
+2	-	w	-	írás jog
+3	-	w	x	írás, végrehajtás jog
+4	r	-	-	olvasási jog
+5	r	-	x	olvasás, végrehajtás jog
+6	r	x	-	olvasás, írás jog
+7	r	w	x	minden jog
+
+tulajdonos-csoport-mindenkimás
