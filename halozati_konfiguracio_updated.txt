@@ -1,0 +1,150 @@
+
+==========================
+SWITCH1 és SWITCH2 konfiguráció
+==========================
+
+conf t
+vlan 10
+ name AMUNDSEN
+vlan 20
+ name COOK
+vlan 30
+ name HANSEN
+vlan 50
+ name WEATHER
+exit
+
+! Portok hozzárendelése VLAN-okhoz
+interface range fa0/3 - 5
+ switchport mode access
+ switchport access vlan 10
+
+interface range fa0/6 - 9
+ switchport mode access
+ switchport access vlan 20
+
+interface range fa0/10 - 18
+ switchport mode access
+ switchport access vlan 30
+
+interface range fa0/19 - 24
+ switchport mode access
+ switchport access vlan 50
+
+! Trönk port beállítása (pl. fa0/1)
+interface fa0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 50
+ switchport trunk allowed vlan 10,20,30
+ switchport nonegotiate
+
+
+==========================
+NORD Router konfiguráció
+==========================
+
+hostname NORD
+
+interface fa0/0.10
+ encapsulation dot1Q 10
+ ip address 172.18.10.1 255.255.255.0
+
+interface fa0/0.20
+ encapsulation dot1Q 20
+ ip address 172.18.20.1 255.255.255.0
+
+interface fa0/0.30
+ encapsulation dot1Q 30
+ ip address 172.18.30.1 255.255.255.0
+
+interface fa0/0.50
+ encapsulation dot1Q 50 native
+ ip address 172.18.50.1 255.255.255.0
+
+! DHCP konfiguráció
+ip dhcp excluded-address 172.18.20.1 172.18.20.5
+ip dhcp excluded-address 172.18.30.1 172.18.30.5
+
+ip dhcp pool COOK
+ network 172.18.20.0 255.255.255.0
+ default-router 172.18.20.1
+ dns-server 4.4.4.4
+
+ip dhcp pool HANSEN
+ network 172.18.30.0 255.255.255.0
+ default-router 172.18.30.1
+ dns-server 4.4.4.4
+
+! WAN kapcsolat (PPP + CHAP)
+interface serial0/0/0
+ ip address 30.30.30.1 255.255.255.252
+ encapsulation ppp
+ clock rate 64000
+ ppp authentication chap
+
+username OSLO password delisark123
+
+! Statikus alapértelmezett útvonal (alapértelmezett: minden ismeretlen cím ide megy)
+ip route 0.0.0.0 0.0.0.0 30.30.30.2
+
+! Felhasználó létrehozása
+username amundsen privilege 15 secret delisark123
+
+line vty 0 4
+ login local
+ transport input telnet
+
+
+==========================
+OSLO Router konfiguráció
+==========================
+
+hostname OSLO
+
+interface serial0/0/0
+ ip address 30.30.30.2 255.255.255.252
+ encapsulation ppp
+ ppp authentication chap
+
+username NORD password delisark123
+
+! Statikus útvonal VLAN-okhoz (összegzett route a 172.18.0.0/20 alhálózathoz)
+ip route 172.18.0.0 255.255.240.0 30.30.30.1
+
+! Felhasználó létrehozása
+username amundsen privilege 15 secret delisark123
+
+line vty 0 4
+ login local
+ transport input telnet
+
+
+==========================
+SWITCH vty ACL korlátozás (mindkét switchen)
+==========================
+
+access-list 10 permit 172.18.50.0 0.0.0.255
+access-list 10 deny any
+
+line vty 0 4
+ access-class 10 in
+ password cisco
+ login
+
+
+==========================
+MEGJEGYZÉS: statikus útvonalak szintaxisa
+==========================
+
+! Statikus útvonal szintaxisa:
+ip route [hálózat_címe] [alhálózati_maszk] [következő_ugrás_ip_címe]
+
+! Példa (statikus): elérés a 172.18.0.0/20 hálózathoz OSLO-ból:
+ip route 172.18.0.0 255.255.240.0 30.30.30.1
+
+! Alapértelmezett útvonal szintaxisa:
+ip route 0.0.0.0 0.0.0.0 [következő_ugrás_ip_címe]
+
+! Példa (default route): minden ismeretlen forgalom az OSLO router irányába:
+ip route 0.0.0.0 0.0.0.0 30.30.30.2
